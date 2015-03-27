@@ -1,5 +1,5 @@
 this is my first time bry to using0 github;9:36 2015/3/27
 test4 git conflict; 10:56 2015/3/27
 test for  conflict again 11:26 2015/3/27
+test from master1 for conflict;14:04 2015/3/27
 
-in the master file source;14:05 2015/3/27
