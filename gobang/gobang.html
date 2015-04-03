@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>万事俱备，就差一个程序员了</title>
+	<style>
+	body {background-color:#000;TEXT-ALIGN: center;}
+	#remark { height:600px; width:700px ;border:1px solid #9C3;padding-top:10px;margin-left:auto; margin-right:auto;margin-top80px; display: none}
+	#main{height:600px; width:700px ;border:1px solid #9C3;padding-top:10px;margin-left:auto; margin-right:auto;margin-top:50px}
+	
+	</style>
+</head>
+<body>
+	<div   id="remark">
+		<p>胜败乃兵家常事，大侠请F5再来</p>
+	</div>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom --> 
+	<div   id="main"></div>
+    <!-- ECharts单文件引入 -->
+    <script src="js/jquery-2.1.1.min.js"></script>
+	<!--<script src="js/source/echarts.js"></script> -->
+	<script src="js/dist/echarts.js"></script>
+	<script type="text/javascript" >
+	
+	/****
+	*1.初始化eachart数据，加载echart相关图表及gobang核心算法模块（go），渲染
+	*2.在div上增加点击事件，下棋
+	*3.根据回调函数返回的数据判读是否已经赢棋
+	***/
+	var component;
+	var option;
+	var myChart;
+	var go;
+	
+	/**初始化eachart数据**/		
+	// 路径配置
+	require.config({
+		paths: {
+			//echarts: 'js/source',
+			echarts: 'js/dist',
+			gobang:'js/gobang'
+		}
+	});
+	
+	// 加载
+	 require(
+		[
+			'echarts',
+			'echarts/chart/scatter',// 使用散点图就加载scatter模块，按需加载
+			'gobang'			//加载核心算法模块
+		],
+		function (ec,scatter,gobang) {
+		//这里如果用jq的方法，要用$("#main").get();
+		myChart = ec.init(document.getElementById('main'));
+		option = {
+			backgroundColor:'#FFF',
+			tooltip : {
+				trigger: 'axis',
+				showDelay : 0,
+				axisPointer:{
+					type : 'cross',
+					lineStyle : {
+					  color: '#1e90ff',
+					  width: 4,
+					  type: 'dashed'
+					},
+				}
+			},
+			legend: {
+				data:['天王','小鸡']
+			},
+			
+			toolbox: {
+				show : true,
+				feature : {
+					//mark : {show: true},
+					//dataZoom : {show: true},
+					//dataView : {show: true, readOnly: false},
+					//restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			xAxis : [//x轴设置
+				{
+					min: 0,
+					max: 14,
+					type : 'value',
+					power: 1,
+					splitNumber: 14,
+					scale: true
+				}
+			],
+			yAxis : [//y轴设置
+				{
+					min: 0,
+					max: 14,
+					type : 'value',
+					power: 1,
+					splitNumber: 14,
+					scale: true
+				}
+			],
+			series : [
+				{
+					name:'天王',
+					type:'scatter',
+					symbolSize: function (value){
+						return 15;
+					},
+					data: p1
+				},
+				{
+					name:'小鸡',
+					type:'scatter',
+					symbol:'circle',
+					symbolSize: function (value){
+						return 15;
+					},
+					data: p2
+				}
+			]
+		};//end option
+		
+		//为echarts对象加载数据 
+		myChart.setOption(option); 		
+		go = gobang;
+		component = myChart.component;
+		//var zrConfig = require('zrender/config');
+		//不用echart本身的点击事件，这个点击事件点击在没有点的表格上没生效，用zrConfig的也一样，直接用jq的其实也一样的
+		//Chart.on(zrConfig.EVENT.CLICK, eConsole);					
+		}
+	);
+	/***echart数据初始化完成***/
+	
+	var p1 = [];//玩家的坐标数组，用于echart在表格上渲染圆点
+	var p2 = [];//player2
+	var flag1 = true;	//赢子标记，用于判断最后一步是否渲染
+	var flag2 = true;
+	
+	//棋盘 0表示没有棋子，1为player1,2为player2
+    var board = (function(){
+        var board = new Array();
+        for(var i = 0 ;i < 15; i++ ){
+            board[i] = new Array();
+            for(var j = 0;j < 15;j++){
+                board[i][j] = 0;
+            }
+        }
+		console.info('界面棋盘初始化成功！')
+        return board;
+    })();
+		
+	/**绑定main的点击事件**/	
+	$(function(){
+		$("#main").click(function(param){
+		
+			//$("#remark").slideToggle();	
+		
+			var mx = param.offsetX;
+			var my = param.offsetY;
+			var x = Math.round(component.xAxis.getAxis(0).getValueFromCoord(mx));
+			var y  = Math.round(component.yAxis.getAxis(0).getValueFromCoord(my));
+			
+			/***四个点的偏移量之外的坐标不处理，左上角为(0,0);方向：左，上，右，下 */			
+			if(mx < 65 || my < 45 || mx > 635 ||my >555){
+				return;
+			}
+			
+			var target;
+			if(board[x][y] == 0){
+			 target = go.go(x,y);
+			 }else{
+			 //alert("不能在这里下");
+			 return;
+			 }
+			if(target[2] == 1){
+				if(flag1){
+					p1.push([x,y,100]);
+					//p2.push([target[0],target[1],100])				
+					myChart.setOption(option);
+					board[x][y] == 1;
+					flag1 = false;
+				}				
+				setTimeout(function(){alert("天王盖地虎!")},300);
+				//$("#main").hide();
+				return;
+			}else if(target[2] == 2){					
+				if(flag2){
+					p1.push([x,y,100]);
+					p2.push([target[0],target[1],100])				
+					myChart.setOption(option);
+					board[target[0]][target[1]] = 2;
+					flag2 = false;
+				}
+				setTimeout(function(){alert("小鸡炖蘑菇...")},300);
+				//$("#main").hide();
+				return;
+			}else{
+				if(board[x][y] == 0){
+				p1.push([x,y,100]);
+				p2.push([target[0],target[1],100]);
+				board[x][y] = 1;
+				board[target[0]][target[1]] = 2;
+				myChart.setOption(option);
+				}else {
+					alert("不能在这里下")
+				}	
+			}		
+		})
+	})
+	
+
+    </script>
+</body>
