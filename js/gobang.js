@@ -3,12 +3,6 @@
 create 2015-1-9 11:37:37
 update 2015-1-23 16:19:09
 
-
-数据结构的设计：
-borad[15][15] 15*15的棋盘。
-table[15][15][572] 对于15*15的棋盘，一共有572种可能获胜的可能
-move[x][3] 走法数组
-win[2][572] 获胜组合数组，win[0][k]的值表示player1在第k个获胜可能中已经存在的连子数，初始为0,9表示这个获胜组合已经不可能获胜
 **/
 define(function(){
 
@@ -110,7 +104,7 @@ define(function(){
          }
          return win;
      };
-	 //重新初始化数据
+	 
 	function reset(){
 		var startTime = new Date().getTime();
 		board = initBorad();
@@ -128,7 +122,7 @@ define(function(){
 	function copyData(type){
 		var startTime = new Date().getTime();
 		for(var i = 0;i < 2;i++){
-             		for(var j = 0; j < 572;j++){
+             for(var j = 0; j < 572;j++){
 				if(type == 1)
 					t_win[i][j] = win[i][j];
 				else{
@@ -355,7 +349,12 @@ define(function(){
 		}
 	}
 	
-	function startStep(){//开始第一步,在（5，5）到（10，10）的坐标内随机选一个下
+	//直观的用贪心算法搜索2步。
+	function simpleSearch(type){
+		//alert(move)
+		var score = 0,p1_score = 1000000,p2_score = -1000000;
+		if(type == 2){
+			if(isStart){//开始第一步,在（5，5）到（10，10）的坐标内随机选一个下
 				var x = Math.round(Math.random()*5)+5;
 				var y = Math.round(Math.random()*5)+5 ;
 				if(board[x][y] == 0){
@@ -370,28 +369,6 @@ define(function(){
 				//board[p2_x][p2_y] = 2;
 				makeMove(p2_x,p2_y,2);	
 				isStart = false;
-			var x = Math.round(Math.random()*5)+5;
-				var y = Math.round(Math.random()*5)+5 ;
-				if(board[x][y] == 0){
-					p2_x = x;
-					p2_y = y;
-				}
-				else{
-					p2_x = 8;
-					p2_y = 8;
-				}	
-				console.info('游戏开始，player2在('+p2_x+','+p2_y+')下子...')
-				//board[p2_x][p2_y] = 2;
-				makeMove(p2_x,p2_y,2);	
-				isStart = false;
-	}
-	//直观的用贪心算法搜索2步。
-	function simpleSearch(type){
-		//alert(move)
-		var score = 0,p1_score = 1000000,p2_score = -1000000;
-		if(type == 2){
-			if(isStart){
-				startStep();
 			}else{
 			 
 				copyData(1);//保存局面
