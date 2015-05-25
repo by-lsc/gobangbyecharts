@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>平安官微东莞项目</title>
+</head>
+<body>
+<div class="md-section-divider"></div>
+
+<div class="md-section-divider"></div>
+
+<h1 id="平安官微东莞项目" data-anchor-id="bx0i">平安官微东莞项目</h1>
+
+<div class="md-section-divider"></div>
+
+<h2 id="功能开发-319" data-anchor-id="aryc"><a href="http://192.168.3.30/issues/319" target="_blank">功能开发 #319</a></h2>
+
+<p data-anchor-id="ahda"><div class="toc">
+<ul>
+<li><a href="#平安官微东莞项目">平安官微东莞项目</a><ul>
+<li><a href="#功能开发-319">功能开发 #319</a></li>
+</ul>
+</li>
+<li><a href="#数据库">数据库</a></li>
+<li><a href="#实现">实现</a><ul>
+<li><a href="#admin后台">admin后台</a></li>
+<li><a href="#页面">页面</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</p>
+
+<hr>
+
+<div class="md-section-divider"></div>
+
+<h1 id="数据库" data-anchor-id="k2a5">数据库</h1>
+
+<p data-anchor-id="sshe">复制wx_message_single。并修改type的解释为：1优惠信息，2本地生活</p>
+
+<div class="md-section-divider"></div>
+
+<pre class="prettyprint linenums prettyprinted" data-anchor-id="cycq"><ol class="linenums"><li class="L0"><code class="language-sql"><span class="pln">create table wx_message_activity </span><span class="kwd">as</span><span class="pln"> </span><span class="kwd">select</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="kwd">from</span><span class="pln"> wx_message_single </span><span class="kwd">where</span><span class="pln"> </span><span class="lit">1</span><span class="pun">=</span><span class="lit">2</span></code></li></ol></pre>
+
+<div class="md-section-divider"></div>
+
+<h1 id="实现" data-anchor-id="thb2">实现</h1>
+
+<div class="md-section-divider"></div>
+
+<h2 id="admin后台" data-anchor-id="eheb">admin后台</h2>
+
+<p data-anchor-id="4gic">功能基本与"客服管理"==&gt;"图文消息"功能相当。复制此功能代码并修改。</p>
+
+<div class="md-section-divider"></div>
+
+<h2 id="页面" data-anchor-id="j6s3">页面</h2>
+
+<ol data-anchor-id="kcp9">
+<li>复制 <code>pages/wx/picMsg</code>下的文件为<code>pages/wx/actMsg</code></li>
+<li>复制 <code>MsgController</code>为 <code>ActMsgController</code>，并修改相关RequestMapping</li>
+<li>在<code>decorators.xml</code>里添加相应的<code>RequestMapping</code>路径</li>
+4. 
+</ol>
+</body>
+</html>
